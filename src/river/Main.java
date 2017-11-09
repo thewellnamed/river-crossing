@@ -10,7 +10,7 @@ public class Main {
 		Manifest m = new Manifest();
 		m.add(Missionary.type, 3);
 		m.add(Cannibal.type, 3);
-		//m.add(TestType.type, 3);
+		//m.add(new TestType(), 3);
 		
 		Solver s = new Solver(m, 2);
 		ArrayList<Node> solution = s.solve();
@@ -22,10 +22,7 @@ public class Main {
 		}
 	}
 	
-	public static class TestType implements PassengerType {
-		private TestType() {}
-		public static TestType type = new TestType();
-		
+	public static class TestType extends PassengerType {
 		public String getName() {
 			return "T";
 		}
@@ -35,7 +32,7 @@ public class Main {
 		 * one Missionary
 		 */
 		public boolean validate(Node n) {
-			if (n.right.size(type) > 0 && 
+			if (n.right.size(this) > 0 && 
 				n.right.size(Missionary.type) == 0) {
 					return false;
 			}

@@ -4,7 +4,7 @@ package river;
  * Missionary Passenger Type
  * Cannot be outnumbered by Cannibals
  */
-public class Missionary implements PassengerType {
+public class Missionary extends PassengerType {
 
 	/**
 	 * Singleton

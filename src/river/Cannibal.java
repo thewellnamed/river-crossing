@@ -4,7 +4,7 @@ package river;
  * Cannibal type
  * See Missionary for rules
  */
-public class Cannibal implements PassengerType {
+public class Cannibal extends PassengerType {
 
 	/**
 	 * Singleton
