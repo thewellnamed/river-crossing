@@ -1,6 +1,7 @@
 package river;
 
 import java.util.HashMap;
+import java.util.Set;
 
 public class Manifest {
 	private HashMap<PassengerType, Integer> passengers;
@@ -12,6 +13,8 @@ public class Manifest {
 	}
 	
 	public void add(PassengerType type, Integer count) {
+		if (count <= 0) return;
+		
 		if (passengers.containsKey(type)) {
 			passengers.put(type, passengers.get(type) + count);
 		} else {
@@ -21,7 +24,15 @@ public class Manifest {
 		size += count;
 	}
 	
+	public void add(Manifest m) {
+		for (PassengerType t : m.passengerTypes()) {
+			add(t, m.size(t));
+		}
+	}
+	
 	public void remove(PassengerType type, Integer count) {
+		if (count <= 0) return;
+		
 		if (passengers.containsKey(type)) {
 			int current = passengers.get(type);
 			if (current < count) {
@@ -31,6 +42,12 @@ public class Manifest {
 			
 			passengers.put(type, current - count);
 			size -= count;
+		}
+	}
+	
+	public void remove(Manifest m) {
+		for (PassengerType t : m.passengerTypes()) {
+			remove(t, m.size(t));
 		}
 	}
 	
@@ -57,6 +74,10 @@ public class Manifest {
 		return true;
 	}
 	
+	public Set<PassengerType> passengerTypes() {
+		return passengers.keySet();
+	}
+	
 	public Manifest clone() {
 		Manifest clone = new Manifest();
 		for (PassengerType type : passengers.keySet()) {
@@ -68,6 +89,16 @@ public class Manifest {
 	
 	@Override
 	public String toString() {
-		return "todo";
+		StringBuilder s = new StringBuilder();
+		s.append("(");
+		for (PassengerType type: passengers.keySet()) {
+			if (s.length() > 1) s.append(", ");
+			s.append(type.getName());
+			s.append("=");
+			s.append(size(type));
+		}
+		s.append(")");
+		
+		return s.toString();
 	}
 }
