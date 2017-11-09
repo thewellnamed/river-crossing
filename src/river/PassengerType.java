@@ -1,9 +1,11 @@
 package river;
 
+import java.util.Stack;
+
 /**
- * PassengerType
+ * PassengerType Interface
  */
 public interface PassengerType {
 	public String getName();
-	public boolean validate(Manifest m);
+	public boolean validate(Stack<Node> state, Manifest m);
 }

@@ -1,104 +1,185 @@
 package river;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
+/**
+ * River Crossing Solver
+ *
+ * Given an initial state, and a boat size restriction
+ * Find solutions to arbitrary river crossing problems
+ * Where the rules are defined in the PassengerType implementations
+ */
 public class Solver {
 	private Manifest initialState;
 	private int boatSize;
 	
-	private ArrayList<Crossing> solution;
+	private ArrayList<Node> solution;
 	private Stack<Node> stack;
+	private HashMap<Node, ArrayList<Manifest>> stateMap;
 	
+	/**
+	 * Initialize
+	 */
 	public Solver(Manifest initial, int bSize) {
 		initialState = initial;
 		boatSize = bSize;
 		stack = new Stack<Node>();
+		stateMap = new HashMap<Node, ArrayList<Manifest>>();
+		solution = new ArrayList<Node>();
 	}
 	
-	public ArrayList<Crossing> solve() {
+	/**
+	 * Find a solution
+	 * 
+	 * Returns the shortest solution found
+	 * Uses a backtracking strategy to explore
+	 * the space of possible solutions
+	 * 
+	 * Returns a list of successive node states
+	 * leading from the initial state to a solution state
+	 * @return ArrayList<Node>
+	 */
+	public ArrayList<Node> solve() {
 		Manifest left = initialState.clone();
 		Manifest right = new Manifest();
-		Manifest boat = new Manifest();
+		Manifest emptyBoat = new Manifest();
+		solution.clear();
 		
 		// initialize stack to initial state with possible next moves
-		Node root = new Node(left, right, boat, getTripPermutations(left), Node.BOAT_EMPTY);
+		Node root = new Node(Node.BOAT_LEFT, left, right, emptyBoat);
 		stack.push(root);
 		
 		while (!stack.empty()) {
-			Node next = stack.peek();
+			Node current = stack.peek();
 			
-			// if next is a solution:
-			//    -- left is empty AND
-			//    -- boat is empty AND
-			//    -- right is valid AND 
-			//    -- shorter than current solution or no current solution
-			//    then save the solution and pop()?
-			//
-			// else if cannot proceed
-			//    -- next is invalid OR
-			//    -- next has no children OR
-			//    -- next already as long as existing solution
-			//    then pop()
-			// else 
-            //    -- remove first child from next and push on stack with its own children
-			//    
-			//    the remove makes sure when we pop back to this state
-			//    that we don't try to evaluate the same child again
-			//    when pushing, create a new node, passing getTripPermutations()
-			//    The Manifest to get permutations on is dependent on the last state
-			//    -- if we're sending a boat, get permutations of next.left
-			//    -- if a boat is returning, get permutations of next.right + next.boat
+			//System.out.println(String.format("Eval node: %s", current));
 			
-			System.out.println(String.format("Eval node: %s", next));
+			ArrayList<Manifest> children = getTripPermutations(current);
 			
-			if (next.left.size() == 0 && next.boat.size() == 0 && next.right.isValid()) {
-				System.out.println("found a solution!");
+			// found solution
+			if (current.left.size() == 0 && current.boat.size() == 0 && 
+				current.state == Node.BOAT_RIGHT && current.right.size() == initialState.size() &&
+				current.right.isValid(stack)) {
+				
+				if (solution.isEmpty() || stack.size() < solution.size()) {
+					solution = cloneStack();
+				}
+
+				stack.pop(); // pop twice back to BOAT_LEFT
+				stack.pop(); // and continue
+			}
+			
+			// invalid, no children, or longer than 
+			// current solution
+			else if ((!solution.isEmpty() && stack.size() >= solution.size()) ||
+					 !current.left.isValid(stack) ||
+					 !current.boat.isValid(stack) ||
+					 !current.right.isValid(stack) ||
+					 children.size() == 0) {
+				//System.out.println("--> rejected");
 				stack.pop();
 			}
 			
-			else if (!next.left.isValid() ||
-					 !next.boat.isValid() ||
-					 !next.right.isValid() ||
-					 next.children.size() == 0) {
-				System.out.println("--> rejected");
-				stack.pop();
-			}
+			// push next state to test
 			else {
-				Manifest step = next.children.remove(0), newBranchState, newLeft, newRight;
 				Node n;
-				switch (next.state) {
-					case Node.BOAT_EMPTY:
-						newLeft = next.left.clone();
-						newLeft.remove(step);
-						
-						newBranchState = step.clone();
-						newBranchState.add(next.right);
-						
-						n = new Node(newLeft, next.right, step, getTripPermutations(newBranchState), Node.BOAT_SENDING);
+				Manifest nextBoat, newLeft, newRight;
+				boolean haveNext = false;
+				
+				// If we just sent a (1,1) boat across
+				// Avoid just sending it back, wasting a turn
+				// see validateNextTrip()...
+				do {
+					nextBoat = children.remove(0);
+					haveNext = validateNextTrip(current, nextBoat);
+				} while (!haveNext && children.size() > 0);
+				
+				// no children after validation
+				if (!haveNext) {
+					stack.pop();
+					continue;
+				}
+				
+				//System.out.println("next: " + nextBoat);
+				
+				switch (current.state) {
+					case Node.BOAT_LEFT:
+						newLeft = current.left.clone();
+						newLeft.remove(nextBoat);
+
+						n = new Node(Node.TRAVEL_RIGHT, newLeft, current.right, nextBoat);
 						stack.push(n);
-						break;					
+						break;	
+						
+					case Node.TRAVEL_RIGHT:
+						newRight = current.right.clone();
+						newRight.add(current.boat);
+						n = new Node(Node.BOAT_RIGHT, current.left, newRight, emptyBoat);
+						stack.push(n);
+						break;
+						
+					case Node.BOAT_RIGHT:
+						newRight = current.right.clone();
+						newRight.remove(nextBoat);
+						
+						n = new Node(Node.TRAVEL_LEFT, current.left, newRight, nextBoat);
+						stack.push(n);
+						break;
+						
+					case Node.TRAVEL_LEFT:
+						newLeft = current.left.clone();
+						newLeft.add(current.boat);
+						
+						n = new Node(Node.BOAT_LEFT, newLeft, current.right, emptyBoat);
+						stack.push(n);
+						break;
 				}
 			}
 		}
 		
 		return solution;
 	}
-	
+		
 	/**
 	 * Return passenger permutations of size boatSize from types in manifest
 	 * @param m Manifest
 	 * @return ArrayList<Manifest>
 	 */
-	public ArrayList<Manifest> getTripPermutations(Manifest state) {
+	public ArrayList<Manifest> getTripPermutations(Node n) {
+		if (stateMap.containsKey(n)) {
+			return stateMap.get(n);
+		}
+		
+		Manifest m;
+		switch (n.state) {
+			case Node.BOAT_LEFT:
+				m = n.left;
+				break;
+			
+			case Node.BOAT_RIGHT:
+				m = n.right;
+				break;
+				
+			case Node.TRAVEL_LEFT:
+			case Node.TRAVEL_RIGHT:
+				m = n.boat;
+				break;
+				
+			default:
+				throw new IllegalStateException("wat");
+		}
+		
 		ArrayList<Manifest> permutations = new ArrayList<Manifest>();
 		ArrayList<PassengerType> types = new ArrayList<PassengerType>();
-		types.addAll(state.passengerTypes());
+		types.addAll(m.passengerTypes());
 		PassengerType first = types.remove(0);
 		Manifest trip = new Manifest();
 		
-		getPermutationsForType(permutations, types, first, state, trip);	
+		getPermutationsForType(permutations, types, first, m, trip);	
+		stateMap.put(n, permutations);
 		return permutations;
 	}
 	
@@ -123,28 +204,33 @@ public class Solver {
 		}
 	}
 	
-	private class Node {
-		public static final int BOAT_EMPTY = 0;
-		public static final int BOAT_SENDING = 1;
-		public static final int BOAT_RETURNING = 2;
+	/**
+	 * check proposed next travel state to avoid repeating turns
+	 * That is, if we just sent across a boat with Manifest M
+	 * Then we want to avoid sending back a boat with the same Manifest
+	 * @param Node current state
+	 * @param Manifest proposed next boat trip
+	 * @return boolean
+	 */
+	private boolean validateNextTrip(Node current, Manifest next) {
+		if (current.state == Node.TRAVEL_LEFT || current.state == Node.TRAVEL_RIGHT || stack.size() < 3)
+			return true;
 		
-		public Manifest left;
-		public Manifest right;
-		public Manifest boat;
-		public List<Manifest> children;
-		public int state;
-		
-		public Node(Manifest l, Manifest r, Manifest b, List<Manifest> branches, int crossingType) {
-			left = l;
-			right = r;
-			boat = b;
-			children = branches;
-			state = crossingType;
+		Node lastTrip = stack.get(stack.size() - 2);		
+		return !lastTrip.boat.equals(next);
+	}
+	
+	/**
+	 * Clone current state (For solution)
+	 * @return ArrayList<Node>
+	 */
+	private ArrayList<Node> cloneStack() {
+		ArrayList<Node> ret = new ArrayList<Node>();
+		for (Node n : stack) {
+			Node next = new Node(n.state, n.left.clone(), n.right.clone(), n.boat.clone());
+			ret.add(next);
 		}
 		
-		@Override
-		public String toString() {
-			return String.format("left=%s, boat=%s, right=%s, type=%d, children=%s", left, boat, right, state, children);
-		}
+		return ret;
 	}
 }
