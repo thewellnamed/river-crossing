@@ -1,4 +1,7 @@
-package river;
+package river.passengers;
+
+import river.Manifest;
+import river.Node;
 
 /**
  * Missionary Passenger Type

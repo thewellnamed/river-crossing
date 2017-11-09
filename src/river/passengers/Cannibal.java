@@ -1,4 +1,6 @@
-package river;
+package river.passengers;
+
+import river.Node;
 
 /**
  * Cannibal type
