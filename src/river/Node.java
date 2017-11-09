@@ -3,6 +3,8 @@ package river;
 import java.util.HashSet;
 import java.util.Objects;
 
+import river.passengers.PassengerType;
+
 /**
  * Game state node
  * 

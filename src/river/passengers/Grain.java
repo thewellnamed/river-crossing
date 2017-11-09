@@ -1,22 +1,24 @@
-package river;
+package river.passengers;
+
+import river.Manifest;
+import river.Node;
 
 /**
- * Missionary Passenger Type
- * Cannot be outnumbered by Cannibals
+ * Can't be alone with a Chicken
+ * Without the farmer
  */
-public class Missionary extends PassengerType {
-
+public class Grain extends PassengerType {
 	/**
 	 * Singleton
 	 */
-	private Missionary() {}
-	public static Missionary type = new Missionary();
+	private Grain() {}
+	public static Grain type = new Grain();
 	
 	/**
 	 * Passenger type string
 	 */
 	public String getName() {
-		return "M";
+		return "G";
 	}
 	
 	/**
@@ -27,7 +29,8 @@ public class Missionary extends PassengerType {
 		
 		for (Manifest m : manifests) {
 			if (m.size(type) > 0 && 
-				m.size(Cannibal.type) > m.size(type)) {
+				m.size(Chicken.type) > 0 &&
+				m.size(Farmer.type) == 0) {
 				return false;
 			}
 		}

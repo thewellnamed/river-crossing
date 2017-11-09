@@ -3,6 +3,8 @@ package river;
 import java.util.HashMap;
 import java.util.Set;
 
+import river.passengers.PassengerType;
+
 /**
  * A Passenger Manifest
  */

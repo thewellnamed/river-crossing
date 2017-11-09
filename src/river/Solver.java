@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
+import river.passengers.PassengerType;
+
 /**
  * River Crossing Solver
  *
