@@ -4,7 +4,8 @@ import river.Manifest;
 import river.Node;
 
 /**
- * Can't be with a fox
+ * Can't be alone with a Chicken
+ * Without the farmer
  */
 public class Grain extends PassengerType {
 	/**
@@ -28,7 +29,8 @@ public class Grain extends PassengerType {
 		
 		for (Manifest m : manifests) {
 			if (m.size(type) > 0 && 
-				m.size(Fox.type) > 0) {
+				m.size(Chicken.type) > 0 &&
+				m.size(Farmer.type) == 0) {
 				return false;
 			}
 		}

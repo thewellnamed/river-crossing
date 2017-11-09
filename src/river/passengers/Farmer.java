@@ -3,7 +3,7 @@ package river.passengers;
 import river.Node;
 
 /**
- * Farmer has to be in the boat
+ * Farmer has to be in the boat when it is crossing
  */
 public class Farmer extends PassengerType {
 	/**
