@@ -1,5 +1,6 @@
 package river;
 
+import java.util.HashSet;
 import java.util.Objects;
 
 /**
@@ -28,6 +29,29 @@ public class Node {
 		right = r;
 		boat = b;
 		state = currentState;
+	}
+	
+	/**
+	 * Check validity by calling into rules for each passenger type
+	 * @return boolean
+	 */
+	public boolean isValid() {
+		boolean valid;
+		
+		HashSet<PassengerType> types = new HashSet<PassengerType>();
+		types.addAll(left.passengerTypes());
+		types.addAll(right.passengerTypes());
+		types.addAll(boat.passengerTypes());
+
+		for (PassengerType type : types) {
+			valid = type.validate(this);
+			
+			if (!valid) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	/**

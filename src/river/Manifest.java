@@ -2,7 +2,6 @@ package river;
 
 import java.util.HashMap;
 import java.util.Set;
-import java.util.Stack;
 
 /**
  * A Passenger Manifest
@@ -98,25 +97,7 @@ public class Manifest {
 		Integer ret = passengers.get(type);
 		return (ret == null) ? 0 : ret;
 	}
-	
-	/**
-	 * Check validity by calling into rules for each passenger type
-	 * @return boolean
-	 */
-	public boolean isValid(Stack<Node> state) {
-		boolean valid;
 		
-		for (PassengerType type : passengers.keySet()) {
-			valid = type.validate(state, this);
-			
-			if (!valid) {
-				return false;
-			}
-		}
-		
-		return true;
-	}
-	
 	/**
 	 * Get list of passenger types in Manifest
 	 * @return Set<PassengerType>

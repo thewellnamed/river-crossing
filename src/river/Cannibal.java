@@ -1,7 +1,5 @@
 package river;
 
-import java.util.Stack;
-
 /**
  * Cannibal type
  * See Missionary for rules
@@ -24,7 +22,7 @@ public class Cannibal implements PassengerType {
 	/**
 	 * Validate
 	 */
-	public boolean validate(Stack<Node> state, Manifest m) {
+	public boolean validate(Node state) {
 		return true;
 	}
 }

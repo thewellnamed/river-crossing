@@ -1,7 +1,5 @@
 package river;
 
-import java.util.Stack;
-
 /**
  * Missionary Passenger Type
  * Cannot be outnumbered by Cannibals
@@ -24,9 +22,14 @@ public class Missionary implements PassengerType {
 	/**
 	 * Validate
 	 */
-	public boolean validate(Stack<Node> state, Manifest m) {
-		if (m.size(Cannibal.type) > m.size(Missionary.type)) {
-			return false;
+	public boolean validate(Node state) {
+		Manifest[] manifests = { state.left, state.right, state.boat };
+		
+		for (Manifest m : manifests) {
+			if (m.size(type) > 0 && 
+				m.size(Cannibal.type) > m.size(type)) {
+				return false;
+			}
 		}
 		
 		return true;

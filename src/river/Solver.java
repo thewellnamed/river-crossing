@@ -54,15 +54,14 @@ public class Solver {
 		
 		while (!stack.empty()) {
 			Node current = stack.peek();
+			ArrayList<Manifest> children = getTripPermutations(current);
 			
 			//System.out.println(String.format("Eval node: %s", current));
-			
-			ArrayList<Manifest> children = getTripPermutations(current);
 			
 			// found solution
 			if (current.left.size() == 0 && current.boat.size() == 0 && 
 				current.state == Node.BOAT_RIGHT && current.right.size() == initialState.size() &&
-				current.right.isValid(stack)) {
+				current.isValid()) {
 				
 				if (solution.isEmpty() || stack.size() < solution.size()) {
 					solution = cloneStack();
@@ -75,9 +74,7 @@ public class Solver {
 			// invalid, no children, or longer than 
 			// current solution
 			else if ((!solution.isEmpty() && stack.size() >= solution.size()) ||
-					 !current.left.isValid(stack) ||
-					 !current.boat.isValid(stack) ||
-					 !current.right.isValid(stack) ||
+					 !current.isValid() || 
 					 children.size() == 0) {
 				//System.out.println("--> rejected");
 				stack.pop();
