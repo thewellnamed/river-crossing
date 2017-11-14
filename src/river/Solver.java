@@ -80,29 +80,41 @@ public class Solver {
 					 children.size() == 0) {
 				//System.out.println("--> rejected");
 				stack.pop();
+				
+				if (stack.size() > 1 && 
+					(current.state == Node.BOAT_LEFT || current.state == Node.BOAT_RIGHT)) {
+					stack.pop();
+				}
 			}
 			
 			// push next state to test
 			else {
 				Node n;
-				Manifest nextBoat, newLeft, newRight;
-				boolean haveNext = false;
+				Manifest nextBoat = null, newLeft, newRight;
+				boolean haveNext = (current.state == Node.BOAT_LEFT || current.state == Node.BOAT_RIGHT) ? false : true;
 				
-				// If we just sent a (1,1) boat across
-				// Avoid just sending it back, wasting a turn
-				// see validateNextTrip()...
-				do {
-					nextBoat = children.remove(0);
-					haveNext = validateNextTrip(current, nextBoat);
-				} while (!haveNext && children.size() > 0);
-				
-				// no children after validation
 				if (!haveNext) {
-					stack.pop();
-					continue;
+					// If we just sent a (1,1) boat across
+					// Avoid just sending it back, wasting a turn
+					// see validateNextTrip()...
+					do {
+						nextBoat = children.remove(0);
+						haveNext = validateNextTrip(current, nextBoat);
+					} while (!haveNext && children.size() > 0);
+					
+					// no children after validation
+					if (!haveNext) {
+						stack.pop();
+						
+						if (stack.size() > 1) {
+							stack.pop();
+						}
+						
+						continue;
+					}
+					
+					//System.out.println("--> next: " + nextBoat);
 				}
-				
-				//System.out.println("next: " + nextBoat);
 				
 				switch (current.state) {
 					case Node.BOAT_LEFT:
