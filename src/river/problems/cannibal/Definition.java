@@ -1,6 +1,9 @@
 package river.problems.cannibal;
 
+import java.util.Stack;
+
 import river.Manifest;
+import river.Node;
 import river.problems.ProblemDefinition;
 
 /**
@@ -25,5 +28,22 @@ public class Definition implements ProblemDefinition {
 	
 	public String getDescription() {
 		return "Missionaries and Cannibals";
+	}
+	
+	public boolean validate(Stack<Node> path) {
+		Node state = path.peek();
+		
+		Manifest[] manifests = { state.left, state.right, state.boat };
+		
+		for (Manifest m : manifests) {
+			int missionaries = m.size(Missionary.type),
+				cannibals = m.size(Cannibal.type);
+			
+			if (missionaries > 0 && cannibals > missionaries) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 }

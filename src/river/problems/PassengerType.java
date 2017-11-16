@@ -11,7 +11,6 @@ public abstract class PassengerType {
 	private int hash = 0;
 	
 	public abstract String getName();
-	public abstract boolean validate(Node state);
 	
 	/**
 	 * Treat separate PassengerType instances as equivalent

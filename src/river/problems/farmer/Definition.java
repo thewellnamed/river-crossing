@@ -1,6 +1,9 @@
 package river.problems.farmer;
 
+import java.util.Stack;
+
 import river.Manifest;
+import river.Node;
 import river.problems.ProblemDefinition;
 
 /**
@@ -27,5 +30,33 @@ public class Definition implements ProblemDefinition {
 	
 	public String getDescription() {
 		return "Farmer, Chicken, Fox, and Grain";
+	}
+	
+	public boolean validate(Stack<Node> path) {
+		Node current = path.peek();
+		
+		if ((current.state == Node.TRAVEL_LEFT || current.state == Node.TRAVEL_RIGHT) &&
+			current.boat.size(Farmer.type) == 0) {
+			return false;
+		}
+		
+		Manifest[] manifests = { current.left, current.right, current.boat };
+		
+		for (Manifest m : manifests) {
+			int farmers = m.size(Farmer.type),
+			    chickens = m.size(Chicken.type),
+				foxes = m.size(Fox.type),
+				grain = m.size(Grain.type);
+			
+			if (chickens > 0 && foxes > 0 && farmers == 0) {
+				return false;
+			}
+			
+			if (grain > 0 && chickens > 0 && farmers == 0) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 }

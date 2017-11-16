@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Stack;
 
 import river.problems.PassengerType;
+import river.problems.ProblemDefinition;
 
 /**
  * River Crossing Solver
@@ -22,8 +23,9 @@ public class Solver {
 	// that loop back to a previous state
 	private static final boolean LOOP_CHECK = true;
 	
+	private ProblemDefinition problem;
 	private Manifest initialState;
-	private int boatSize, maxDepth;
+	private int maxDepth;
 	private Solution solution;
 	private Stack<Node> stack;
 	private Node current;
@@ -32,14 +34,14 @@ public class Solver {
 	/**
 	 * Initialize
 	 */
-	public Solver(Manifest initial, int bSize) {
-		this(initial, bSize, DEFAULT_MAX_STACK_DEPTH);
+	public Solver(ProblemDefinition problem) {
+		this(problem, DEFAULT_MAX_STACK_DEPTH);
 	}
 	
-	public Solver(Manifest initial, int bSize, int depth) {
-		initialState = initial;
+	public Solver(ProblemDefinition definition, int depth) {
+		problem = definition;
+		initialState = problem.getInitialState();
 		current = null;
-		boatSize = bSize;
 		maxDepth = depth;
 		stack = new Stack<Node>();
 		nodeChildren = new HashMap<Node, ArrayList<Manifest>>();
@@ -138,7 +140,7 @@ public class Solver {
 	private boolean foundSolution() {
 		return (current.left.size() == 0 && current.boat.size() == 0 && 
 				current.state == Node.BOAT_RIGHT && current.right.size() == initialState.size() &&
-				current.isValid());
+				problem.validate(stack));
 	}
 	
 	/**
@@ -148,7 +150,7 @@ public class Solver {
 		return ((!solution.empty() && stack.size() >= solution.size()) ||
 				stack.size() > maxDepth || 
 			    (children != null && children.size() <= current.nextChild) ||
-				!current.isValid() || foundLoop());
+				!problem.validate(stack) || foundLoop());
 	}
 	
 	/**
@@ -229,6 +231,7 @@ public class Solver {
 	 * Recursive helper
 	 */
 	private void getPermutationsForType(ArrayList<Manifest> permutations, List<PassengerType> types, PassengerType type, Manifest state, Manifest trip) {		
+		int boatSize = problem.getBoatSize();
 		if (trip.size() == boatSize) {
 			return;
 		}

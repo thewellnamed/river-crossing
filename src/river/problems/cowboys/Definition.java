@@ -1,13 +1,16 @@
 package river.problems.cowboys;
 
+import java.util.Stack;
+
 import river.Manifest;
+import river.Node;
 import river.problems.ProblemDefinition;
 
 /**
- * Missionaries and Cannibals
- *
- * In all locations, at all times:
- * Cannibals must not outnumber Missionaries
+ * Mexican Standoff
+ * 
+ * - Cowboys must not outnumber (Mexicans + Indians)
+ * - Mexicans must not outnumber Cowboys
  */
 public class Definition implements ProblemDefinition {
 	public Manifest getInitialState() {
@@ -26,5 +29,27 @@ public class Definition implements ProblemDefinition {
 	
 	public String getDescription() {
 		return "Mexicans, Cowboys, and Indian standoff";
+	}
+	
+	public boolean validate(Stack<Node> path) {
+		Node state = path.peek();
+		
+		Manifest[] manifests = { state.left, state.right, state.boat };
+		
+		for (Manifest m : manifests) {
+			int cowboys = m.size(Cowboy.type),
+				indians = m.size(Indian.type),
+				mexicans = m.size(Mexican.type);
+			
+			if (cowboys > 0 && (indians + mexicans) < cowboys) {
+				return false;
+			}
+			
+			if (mexicans > 0 && cowboys < mexicans) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 }

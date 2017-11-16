@@ -1,6 +1,9 @@
 package river.problems.wives;
 
+import java.util.Stack;
+
 import river.Manifest;
+import river.Node;
 import river.problems.ProblemDefinition;
 
 /**
@@ -11,10 +14,13 @@ import river.problems.ProblemDefinition;
  * the Husband has the same ID
  */
 public class Definition implements ProblemDefinition {
+	
+	private final int COUPLES_COUNT = 3;
+
 	public Manifest getInitialState() {
 		Manifest m = new Manifest();
 		
-		for (int i = 1; i <= 3; i++) {
+		for (int i = 1; i <= COUPLES_COUNT; i++) {
 			m.add(new Husband(i), 1);
 			m.add(new Wife(i), 1);
 		}
@@ -28,5 +34,18 @@ public class Definition implements ProblemDefinition {
 	
 	public String getDescription() {
 		return "Husbands and Wives";
+	}
+	
+	public boolean validate(Stack<Node> path) {
+		Node current = path.peek();
+		
+		for (int i = 1; i <= COUPLES_COUNT; i++) {
+			Wife w = new Wife(i);
+			if (!w.validate(current)) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 }

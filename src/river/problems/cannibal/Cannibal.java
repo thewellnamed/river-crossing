@@ -1,6 +1,5 @@
 package river.problems.cannibal;
 
-import river.Node;
 import river.problems.PassengerType;
 
 /**
@@ -20,12 +19,5 @@ public class Cannibal extends PassengerType {
 	 */
 	public String getName() {
 		return "Cannibal";
-	}
-	
-	/**
-	 * Validate
-	 */
-	public boolean validate(Node state) {
-		return true;
 	}
 }

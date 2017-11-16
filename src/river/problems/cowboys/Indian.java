@@ -1,6 +1,5 @@
 package river.problems.cowboys;
 
-import river.Node;
 import river.problems.PassengerType;
 
 /**
@@ -20,13 +19,5 @@ public class Indian extends PassengerType {
 	 */
 	public String getName() {
 		return "Indian";
-	}
-	
-	/**
-	 * Validate
-	 */
-	public boolean validate(Node state) {
-		
-		return true;
 	}
 }

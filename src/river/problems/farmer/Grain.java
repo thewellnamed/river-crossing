@@ -1,7 +1,5 @@
 package river.problems.farmer;
 
-import river.Manifest;
-import river.Node;
 import river.problems.PassengerType;
 
 /**
@@ -20,22 +18,5 @@ public class Grain extends PassengerType {
 	 */
 	public String getName() {
 		return "Grain";
-	}
-	
-	/**
-	 * Validate
-	 */
-	public boolean validate(Node state) {
-		Manifest[] manifests = { state.left, state.right, state.boat };
-		
-		for (Manifest m : manifests) {
-			if (m.size(type) > 0 && 
-				m.size(Chicken.type) > 0 &&
-				m.size(Farmer.type) == 0) {
-				return false;
-			}
-		}
-		
-		return true;
 	}
 }

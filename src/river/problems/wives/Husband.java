@@ -1,6 +1,5 @@
 package river.problems.wives;
 
-import river.Node;
 import river.problems.PassengerType;
 
 public class Husband extends PassengerType {
@@ -17,8 +16,4 @@ public class Husband extends PassengerType {
 	public String getName() {
 		return String.format("H%s", id);
 	}
-	
-	public boolean validate(Node n) {
-		return true;
-	}	
 }
