@@ -9,7 +9,7 @@ import river.problems.ProblemDefinition;
  * In all locations, at all times:
  * Cannibals must not outnumber Missionaries
  */
-public class Definition extends ProblemDefinition {
+public class Definition implements ProblemDefinition {
 	public Manifest getInitialState() {
 		Manifest m = new Manifest();
 		
@@ -17,6 +17,10 @@ public class Definition extends ProblemDefinition {
 	    m.add(Cannibal.type, 3);
 	    
 	    return m;
+	}
+	
+	public int getBoatSize() { 
+		return 2;
 	}
 	
 	public String getDescription() {

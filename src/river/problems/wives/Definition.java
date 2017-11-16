@@ -10,7 +10,7 @@ import river.problems.ProblemDefinition;
  * a Wife may not be in the presence of a Husband unless
  * the Husband has the same ID
  */
-public class Definition extends ProblemDefinition {
+public class Definition implements ProblemDefinition {
 	public Manifest getInitialState() {
 		Manifest m = new Manifest();
 		
@@ -20,6 +20,10 @@ public class Definition extends ProblemDefinition {
 		}
 	    
 	    return m;
+	}
+	
+	public int getBoatSize() {
+		return 2;
 	}
 	
 	public String getDescription() {

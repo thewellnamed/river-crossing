@@ -10,7 +10,7 @@ import river.problems.ProblemDefinition;
  * - The Chicken may not be left alone with the Fox
  * - The Grain may not be left alone with the Chicken
  */
-public class Definition extends ProblemDefinition {
+public class Definition implements ProblemDefinition {
 	public Manifest getInitialState() {
 		Manifest m = new Manifest();
 		m.add(Farmer.type, 1);
@@ -19,6 +19,10 @@ public class Definition extends ProblemDefinition {
 		m.add(Grain.type, 1);
 	    
 	    return m;
+	}
+	
+	public int getBoatSize() {
+		return 2;
 	}
 	
 	public String getDescription() {
