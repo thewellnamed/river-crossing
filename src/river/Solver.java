@@ -207,13 +207,9 @@ public class Solver {
 				m = n.right;
 				break;
 				
-			case Node.TRAVEL_LEFT:
-			case Node.TRAVEL_RIGHT:
-				m = n.boat;
-				break;
-				
 			default:
-				throw new IllegalStateException("wat");
+				// no children
+				return new ArrayList<Manifest>();
 		}
 		
 		ArrayList<Manifest> permutations = new ArrayList<Manifest>();
