@@ -79,12 +79,7 @@ public class Solver {
 					 !current.isValid() || 
 					 children.size() == 0) {
 				//System.out.println("--> rejected");
-				stack.pop();
-				
-				if (stack.size() > 1 && 
-					(current.state == Node.BOAT_LEFT || current.state == Node.BOAT_RIGHT)) {
-					stack.pop();
-				}
+				backtrack(current);
 			}
 			
 			// push next state to test
@@ -102,14 +97,8 @@ public class Solver {
 						haveNext = validateNextTrip(current, nextBoat);
 					} while (!haveNext && children.size() > 0);
 					
-					// no children after validation
 					if (!haveNext) {
-						stack.pop();
-						
-						if (stack.size() > 1) {
-							stack.pop();
-						}
-						
+						backtrack(current);
 						continue;
 					}
 					
@@ -152,6 +141,22 @@ public class Solver {
 		}
 		
 		return solution;
+	}
+	
+	/**
+	 * Backtrack
+	 * @param current
+	 */
+	private void backtrack(Node current) {
+		stack.pop();
+		
+		// since transition from TRAVEL states to LEFT/RIGHT
+		// is automatic, pop back one more state to avoid
+		// unnecessary looping
+		if (stack.size() > 1 && 
+			(current.state == Node.BOAT_LEFT || current.state == Node.BOAT_RIGHT)) {
+			stack.pop();
+		}
 	}
 		
 	/**

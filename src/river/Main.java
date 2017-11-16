@@ -10,13 +10,13 @@ import river.passengers.*;
 public class Main {
 	public static void main(String[] args) {
 		Manifest m = new Manifest();
-		m.add(Farmer.type, 1);
-		m.add(Chicken.type, 1);
-		m.add(Fox.type, 1);
-		m.add(Grain.type, 1);
+		//m.add(Farmer.type, 1);
+		//m.add(Chicken.type, 1);
+		//m.add(Fox.type, 1);
+		//m.add(Grain.type, 1);
 		
-		//m.add(Missionary.type, 3);
-		//m.add(Cannibal.type, 3);
+		m.add(Missionary.type, 3);
+		m.add(Cannibal.type, 3);
 		
 		Solver s = new Solver(m, 2);
 		ArrayList<Node> solution = s.solve();
