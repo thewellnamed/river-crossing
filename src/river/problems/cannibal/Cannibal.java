@@ -1,6 +1,7 @@
-package river.passengers;
+package river.problems.cannibal;
 
 import river.Node;
+import river.problems.PassengerType;
 
 /**
  * Cannibal type

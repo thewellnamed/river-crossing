@@ -1,9 +1,10 @@
 package river;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-import river.passengers.PassengerType;
+import river.problems.PassengerType;
 
 /**
  * A Passenger Manifest
@@ -140,12 +141,22 @@ public class Manifest {
 	@Override
 	public String toString() {
 		StringBuilder s = new StringBuilder();
+		ArrayList<PassengerType> sortedTypes = new ArrayList<PassengerType>(passengers.keySet());
+		sortedTypes.sort((a,b) -> {
+			return a.getName().compareTo(b.getName());
+		});
+		
 		s.append("(");
-		for (PassengerType type: passengers.keySet()) {
+		for (PassengerType type: sortedTypes) {
+			int size = size(type);
+			
 			if (s.length() > 1) s.append(", ");
 			s.append(type.getName());
-			s.append("=");
-			s.append(size(type));
+			
+			if (size > 1) {
+				s.append("=");
+				s.append(size(type));
+			}
 		}
 		s.append(")");
 		

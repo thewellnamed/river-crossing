@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
-import river.passengers.PassengerType;
+import river.problems.PassengerType;
 
 /**
  * River Crossing Solver
@@ -15,21 +15,34 @@ import river.passengers.PassengerType;
  * Where the rules are defined in the PassengerType implementations
  */
 public class Solver {
-	private Manifest initialState;
-	private int boatSize;
+	// reject states if stack gets too deep
+	private static final int DEFAULT_MAX_STACK_DEPTH = 1000;
 	
+	// enable optimization to prune states
+	// that loop back to a previous state
+	private static final boolean LOOP_CHECK = true;
+	
+	private Manifest initialState;
+	private int boatSize, maxDepth;
 	private ArrayList<Node> solution;
 	private Stack<Node> stack;
-	private HashMap<Node, ArrayList<Manifest>> stateMap;
+	private Node current;
+	private HashMap<Node, ArrayList<Manifest>> nodeChildren;
 	
 	/**
 	 * Initialize
 	 */
 	public Solver(Manifest initial, int bSize) {
+		this(initial, bSize, DEFAULT_MAX_STACK_DEPTH);
+	}
+	
+	public Solver(Manifest initial, int bSize, int depth) {
 		initialState = initial;
+		current = null;
 		boatSize = bSize;
+		maxDepth = depth;
 		stack = new Stack<Node>();
-		stateMap = new HashMap<Node, ArrayList<Manifest>>();
+		nodeChildren = new HashMap<Node, ArrayList<Manifest>>();
 		solution = new ArrayList<Node>();
 	}
 	
@@ -54,17 +67,17 @@ public class Solver {
 		Node root = new Node(Node.BOAT_LEFT, left, right, emptyBoat);
 		stack.push(root);
 		
+		int iterations = 0;
 		while (!stack.empty()) {
-			Node current = pruneStack();
-			ArrayList<Manifest> children = getTripPermutations(current);
+			++iterations;
+			current = stack.peek();
+			boolean checkChildren = (current.state == Node.BOAT_LEFT || current.state == Node.BOAT_RIGHT);
+			ArrayList<Manifest> children = checkChildren ? getTripPermutations(current) : null;
 			
-			//System.out.println(String.format("%s", current.prettyString()));
+			//System.out.println(String.format("Next: %s", current.prettyString()));
 			
-			// found solution
-			if (current.left.size() == 0 && current.boat.size() == 0 && 
-				current.state == Node.BOAT_RIGHT && current.right.size() == initialState.size() &&
-				current.isValid()) {
-				
+			// is current state a solution?
+			if (foundSolution()) {
 				if (solution.isEmpty() || stack.size() < solution.size()) {
 					solution = cloneStack();
 				}
@@ -73,63 +86,96 @@ public class Solver {
 				stack.pop(); // and continue
 			}
 			
-			// invalid, no children, or longer than 
-			// current solution
-			else if ((!solution.isEmpty() && stack.size() >= solution.size()) ||
-					 !current.isValid() || 
-					 children.size() == 0) {
+			// is current state a dead-end?
+			else if (rejectState(children)) {
 				//System.out.println("   rejected");
-				backtrack(current);
+				backtrack();
 			}
 			
-			// push next state to test
+			// push next state onto the stack
 			else {
-				Node n;
-				Manifest nextBoat = children.remove(0), newLeft, newRight;
+				Manifest nextBoat, newLeft, newRight;
 				
 				switch (current.state) {
 					case Node.BOAT_LEFT:
+						nextBoat = children.get(current.nextChild++);
 						newLeft = current.left.clone();
 						newLeft.remove(nextBoat);
-
-						n = new Node(Node.TRAVEL_RIGHT, newLeft, current.right, nextBoat);
-						stack.push(n);
+						stack.push(new Node(Node.TRAVEL_RIGHT, newLeft, current.right, nextBoat));
 						break;	
-						
-					case Node.TRAVEL_RIGHT:
-						newRight = current.right.clone();
-						newRight.add(current.boat);
-						n = new Node(Node.BOAT_RIGHT, current.left, newRight, emptyBoat);
-						stack.push(n);
-						break;
-						
+												
 					case Node.BOAT_RIGHT:
+						nextBoat = children.get(current.nextChild++);
 						newRight = current.right.clone();
 						newRight.remove(nextBoat);
-						
-						n = new Node(Node.TRAVEL_LEFT, current.left, newRight, nextBoat);
-						stack.push(n);
+						stack.push(new Node(Node.TRAVEL_LEFT, current.left, newRight, nextBoat));
 						break;
 						
 					case Node.TRAVEL_LEFT:
 						newLeft = current.left.clone();
 						newLeft.add(current.boat);
+						stack.push(new Node(Node.BOAT_LEFT, newLeft, current.right, emptyBoat));
+						break;
 						
-						n = new Node(Node.BOAT_LEFT, newLeft, current.right, emptyBoat);
-						stack.push(n);
+					case Node.TRAVEL_RIGHT:
+						newRight = current.right.clone();
+						newRight.add(current.boat);
+						stack.push(new Node(Node.BOAT_RIGHT, current.left, newRight, emptyBoat));
 						break;
 				}
 			}
 		}
 		
+		System.out.println(String.format("Iteration Count: %d", iterations));
+		
 		return solution;
+	}
+	
+	/**
+	 * Current state is a solution?
+	 */
+	private boolean foundSolution() {
+		return (current.left.size() == 0 && current.boat.size() == 0 && 
+				current.state == Node.BOAT_RIGHT && current.right.size() == initialState.size() &&
+				current.isValid());
+	}
+	
+	/**
+	 * Current state is a dead end?
+	 */
+	private boolean rejectState(ArrayList<Manifest> children) {
+		return ((!solution.isEmpty() && stack.size() >= solution.size()) ||
+				stack.size() > maxDepth || 
+			    (children != null && children.size() <= current.nextChild) ||
+				!current.isValid() || foundLoop());
+	}
+	
+	/**
+	 * Current state duplicates a previous state in the stack?
+	 */
+	private boolean foundLoop() {
+		if (LOOP_CHECK) {
+			int size = stack.size();
+			
+			if ((current.state == Node.BOAT_LEFT || current.state == Node.BOAT_RIGHT) &&
+				size > 4 && nodeChildren.containsKey(current)) {
+			
+				for (int i = size - 4; i >= 0; i--) {
+					if (stack.get(i).equals(current)) {
+						return true;
+					}
+				}
+			}
+		}
+			
+		return false;
 	}
 	
 	/**
 	 * Backtrack
 	 * @param current
 	 */
-	private void backtrack(Node current) {
+	private void backtrack() {
 		stack.pop();
 		
 		// since transition from TRAVEL states to LEFT/RIGHT
@@ -146,9 +192,9 @@ public class Solver {
 	 * @param m Manifest
 	 * @return ArrayList<Manifest>
 	 */
-	public ArrayList<Manifest> getTripPermutations(Node n) {
-		if (stateMap.containsKey(n)) {
-			return stateMap.get(n);
+	private ArrayList<Manifest> getTripPermutations(Node n) {
+		if (nodeChildren.containsKey(n)) {
+			return nodeChildren.get(n);
 		}
 		
 		Manifest m;
@@ -177,7 +223,7 @@ public class Solver {
 		Manifest trip = new Manifest();
 		
 		getPermutationsForType(permutations, types, first, m, trip);	
-		stateMap.put(n, permutations);
+		nodeChildren.put(n, permutations);
 		return permutations;
 	}
 	
@@ -200,36 +246,6 @@ public class Solver {
 				getPermutationsForType(permutations, types.subList(1, types.size()), types.get(0), state, next);
 			}
 		}
-	}
-	
-	/**
-	 * Avoids looping by pruning stack when 
-	 * a state is found which already exists in the stack
-	 * @return
-	 */
-	private Node pruneStack() {
-		Node current = stack.peek();
-		int size = stack.size();
-		
-		if ((current.state == Node.BOAT_LEFT || current.state == Node.BOAT_RIGHT) &&
-			size > 4 && stateMap.containsKey(current)) {
-			
-			boolean seenBefore = false;
-			for (int i = size - 4; i >= 0; i--) {
-				if (stack.get(i).equals(current)) {
-					seenBefore = true;
-					break;
-				}
-			}
-			
-			// if the stack contains a loop, backtrack...
-			if (seenBefore) {
-				backtrack(current);
-				current = stack.peek();
-			}
-		}
-		
-		return current;
 	}
 	
 	/**

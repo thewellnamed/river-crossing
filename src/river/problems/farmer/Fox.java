@@ -1,6 +1,7 @@
-package river.passengers;
+package river.problems.farmer;
 
 import river.Node;
+import river.problems.PassengerType;
 
 /**
  * Can't be with a fox

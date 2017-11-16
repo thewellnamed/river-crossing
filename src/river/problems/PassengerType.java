@@ -1,4 +1,6 @@
-package river.passengers;
+package river.problems;
+
+import java.util.Objects;
 
 import river.Node;
 
@@ -20,5 +22,10 @@ public abstract class PassengerType {
 		
 		PassengerType pt = (PassengerType) o;
 		return pt.getName().equals(getName());
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(getName());
 	}
 }

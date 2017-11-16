@@ -3,7 +3,7 @@ package river;
 import java.util.HashSet;
 import java.util.Objects;
 
-import river.passengers.PassengerType;
+import river.problems.PassengerType;
 
 /**
  * Game state node
@@ -11,6 +11,7 @@ import river.passengers.PassengerType;
  * Stores the current state of a crossing in progress
  * - state: The location of the boat (left, right, traveling right, traveling left)
  * - Passenger Manifest for (left, right, boat)
+ * - index of next child to test
  */
 public class Node {
 	public static final int BOAT_LEFT = 0;
@@ -22,6 +23,7 @@ public class Node {
 	public Manifest right;
 	public Manifest boat;
 	public int state;
+	public int nextChild;
 	
 	/**
 	 * Construct
@@ -31,6 +33,7 @@ public class Node {
 		right = r;
 		boat = b;
 		state = currentState;
+		nextChild = 0;
 	}
 	
 	/**
@@ -86,7 +89,7 @@ public class Node {
 	 * @return String
 	 */
 	public String prettyString() {
-		return String.format("%s [Left%2$-20s    Boat%3$-20s    Right%4$-20s]", getStateString(), left, boat, right);
+		return String.format("%s [LEFT%2$-25s  ---  BOAT%3$-20s  --- RIGHT%4$-25s]", getStateString(), left, boat, right);
 	}
 	
 	/**

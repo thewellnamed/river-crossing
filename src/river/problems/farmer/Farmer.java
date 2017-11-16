@@ -1,6 +1,7 @@
-package river.passengers;
+package river.problems.farmer;
 
 import river.Node;
+import river.problems.PassengerType;
 
 /**
  * Farmer has to be in the boat when it is crossing

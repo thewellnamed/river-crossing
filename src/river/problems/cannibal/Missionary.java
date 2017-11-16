@@ -1,7 +1,8 @@
-package river.passengers;
+package river.problems.cannibal;
 
 import river.Manifest;
 import river.Node;
+import river.problems.PassengerType;
 
 /**
  * Missionary Passenger Type

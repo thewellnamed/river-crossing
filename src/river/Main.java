@@ -2,27 +2,20 @@ package river;
 
 import java.util.ArrayList;
 
-import river.passengers.*;
-
 /**
  * Demo
  */
 public class Main {
-	public static void main(String[] args) {
-		Manifest m = new Manifest();
-		//m.add(Farmer.type, 1);
-		//m.add(Chicken.type, 1);
-		//m.add(Fox.type, 1);
-		//m.add(Grain.type, 1);
+	public static void main(String[] args) {	
+		int boatSize = 2;
+		//Manifest init = river.problems.cannibal.Definition.getInitialState();
+		//Manifest init = river.problems.farmer.Definition.getInitialState();
+		Manifest init = river.problems.wives.Definition.getInitialState();
 		
-		m.add(Missionary.type, 3);
-		m.add(Cannibal.type, 3);
-		
-		Solver s = new Solver(m, 2);
+		Solver s = new Solver(init, boatSize);
 		ArrayList<Node> solution = s.solve();
 		
-		System.out.println("Solution: ");
-		System.out.println("----------------\n");
+		System.out.println("Solution:\n");
 		for (Node n : solution) {
 			System.out.println(n.prettyString());
 		}
