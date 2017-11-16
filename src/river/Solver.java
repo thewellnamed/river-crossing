@@ -68,16 +68,19 @@ public class Solver {
 		stack.push(root);
 		
 		int iterations = 0;
+		int solutions = 0;
+		
 		while (!stack.empty()) {
 			++iterations;
 			current = stack.peek();
-			boolean checkChildren = (current.state == Node.BOAT_LEFT || current.state == Node.BOAT_RIGHT);
-			ArrayList<Manifest> children = checkChildren ? getTripPermutations(current) : null;
+			ArrayList<Manifest> children = getTripPermutations(current);
 			
 			//System.out.println(String.format("Next: %s", current.prettyString()));
 			
 			// is current state a solution?
 			if (foundSolution()) {
+				solutions++;
+					
 				if (solution.isEmpty() || stack.size() < solution.size()) {
 					solution = cloneStack();
 				}
@@ -127,6 +130,8 @@ public class Solver {
 		}
 		
 		System.out.println(String.format("Iteration Count: %d", iterations));
+		System.out.println(String.format("States Visited: %d", nodeChildren.keySet().size()));
+		System.out.println(String.format("Solutions found: %d\n", solutions));
 		
 		return solution;
 	}
@@ -197,7 +202,9 @@ public class Solver {
 			return nodeChildren.get(n);
 		}
 		
-		Manifest m;
+		Manifest m = null;
+		ArrayList<Manifest> permutations = null;
+		
 		switch (n.state) {
 			case Node.BOAT_LEFT:
 				m = n.left;
@@ -206,19 +213,18 @@ public class Solver {
 			case Node.BOAT_RIGHT:
 				m = n.right;
 				break;
-				
-			default:
-				// no children
-				return new ArrayList<Manifest>();
 		}
 		
-		ArrayList<Manifest> permutations = new ArrayList<Manifest>();
-		ArrayList<PassengerType> types = new ArrayList<PassengerType>();
-		types.addAll(m.passengerTypes());
-		PassengerType first = types.remove(0);
-		Manifest trip = new Manifest();
+		if (m != null) {
+			permutations = new ArrayList<Manifest>();
+			ArrayList<PassengerType> types = new ArrayList<PassengerType>();
+			types.addAll(m.passengerTypes());
+			PassengerType first = types.remove(0);
+			Manifest trip = new Manifest();
+			
+			getPermutationsForType(permutations, types, first, m, trip);	
+		}
 		
-		getPermutationsForType(permutations, types, first, m, trip);	
 		nodeChildren.put(n, permutations);
 		return permutations;
 	}
