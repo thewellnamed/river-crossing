@@ -1,18 +1,23 @@
 package river;
 
+import river.problems.ProblemDefinition;
+
 /**
  * Demo
  */
 public class Main {
-	public static void main(String[] args) {	
+	public static void main(String[] args) {
+		ProblemDefinition problem;
 		int boatSize = 2;
-		Manifest init = river.problems.cannibal.Definition.getInitialState();
-		//Manifest init = river.problems.farmer.Definition.getInitialState();
-		//Manifest init = river.problems.wives.Definition.getInitialState();
 		
-		Solver s = new Solver(init, boatSize);		
+		problem = new river.problems.cannibal.Definition();
+		//problem = new river.problems.farmer.Definition();
+		//problem = new river.problems.wives.Definition();
+		
+		Solver s = new Solver(problem.getInitialState(), boatSize);		
 		Solution solution = s.solve();
 		
+		System.out.printf("Problem: %s\n", problem.getDescription());
 		System.out.println(solution);
 	}
 }

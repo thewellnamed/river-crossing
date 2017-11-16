@@ -1,6 +1,7 @@
 package river.problems.wives;
 
 import river.Manifest;
+import river.problems.ProblemDefinition;
 
 /**
  * Husbands and Wives
@@ -9,8 +10,8 @@ import river.Manifest;
  * a Wife may not be in the presence of a Husband unless
  * the Husband has the same ID
  */
-public class Definition {
-	public static Manifest getInitialState() {
+public class Definition extends ProblemDefinition {
+	public Manifest getInitialState() {
 		Manifest m = new Manifest();
 		
 		for (int i = 1; i <= 3; i++) {
@@ -19,5 +20,9 @@ public class Definition {
 		}
 	    
 	    return m;
+	}
+	
+	public String getDescription() {
+		return "Husbands and Wives";
 	}
 }

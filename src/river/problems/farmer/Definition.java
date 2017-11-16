@@ -1,6 +1,7 @@
 package river.problems.farmer;
 
 import river.Manifest;
+import river.problems.ProblemDefinition;
 
 /**
  * Farmer, Chicken, Fox, and Grain
@@ -9,8 +10,8 @@ import river.Manifest;
  * - The Chicken may not be left alone with the Fox
  * - The Grain may not be left alone with the Chicken
  */
-public class Definition {
-	public static Manifest getInitialState() {
+public class Definition extends ProblemDefinition {
+	public Manifest getInitialState() {
 		Manifest m = new Manifest();
 		m.add(Farmer.type, 1);
 		m.add(Chicken.type, 1);
@@ -18,5 +19,9 @@ public class Definition {
 		m.add(Grain.type, 1);
 	    
 	    return m;
+	}
+	
+	public String getDescription() {
+		return "Farmer, Chicken, Fox, and Grain";
 	}
 }
