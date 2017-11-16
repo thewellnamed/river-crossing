@@ -54,7 +54,7 @@ public class Solver {
 	 * 
 	 * Returns a list of successive node states
 	 * leading from the initial state to a solution state
-	 * @return ArrayList<Node>
+	 * @return Solution
 	 */
 	public Solution solve() {
 		Manifest left = initialState.clone();
@@ -62,7 +62,7 @@ public class Solver {
 		Manifest emptyBoat = new Manifest();
 		solution = new Solution(null);
 		
-		// initialize stack to initial state with possible next moves
+		// initialize stack to initial state
 		Node root = new Node(Node.BOAT_LEFT, left, right, emptyBoat);
 		stack.push(root);
 		
