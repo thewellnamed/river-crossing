@@ -49,7 +49,7 @@ public class Solution {
 	public String toString() {
 		StringBuilder s = new StringBuilder();
 		
-		s.append(String.format("Elapsed Time: %.2fs\n", elapsedSeconds));
+		s.append(String.format("Elapsed Time: %.4fs\n", elapsedSeconds));
 		s.append(String.format("Iteration Count: %d\n", iterations));
 		s.append(String.format("States Visited: %d\n", statesVisited));
 		s.append(String.format("Solutions found: %d\n\n", count));
