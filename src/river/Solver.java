@@ -16,7 +16,7 @@ import river.problems.PassengerType;
  */
 public class Solver {
 	// reject states if stack gets too deep
-	private static final int DEFAULT_MAX_STACK_DEPTH = 1000;
+	private static final int DEFAULT_MAX_STACK_DEPTH = 100;
 	
 	// enable optimization to prune states
 	// that loop back to a previous state

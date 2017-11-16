@@ -89,7 +89,7 @@ public class Node {
 	 * @return String
 	 */
 	public String prettyString() {
-		return String.format("%s [LEFT%2$-25s  ---  BOAT%3$-20s  --- RIGHT%4$-25s]", getStateString(), left, boat, right);
+		return String.format("%s | LEFT%2$-25s  ---  BOAT%3$-20s  --- RIGHT%4$-25s", getStateString(), left, boat, right);
 	}
 	
 	/**
