@@ -55,10 +55,10 @@ public class Solver {
 		stack.push(root);
 		
 		while (!stack.empty()) {
-			Node current = stack.peek();
+			Node current = pruneStack();
 			ArrayList<Manifest> children = getTripPermutations(current);
 			
-			//System.out.println(String.format("Eval node: %s", current));
+			//System.out.println(String.format("%s", current.prettyString()));
 			
 			// found solution
 			if (current.left.size() == 0 && current.boat.size() == 0 && 
@@ -78,32 +78,14 @@ public class Solver {
 			else if ((!solution.isEmpty() && stack.size() >= solution.size()) ||
 					 !current.isValid() || 
 					 children.size() == 0) {
-				//System.out.println("--> rejected");
+				//System.out.println("   rejected");
 				backtrack(current);
 			}
 			
 			// push next state to test
 			else {
 				Node n;
-				Manifest nextBoat = null, newLeft, newRight;
-				boolean haveNext = (current.state == Node.BOAT_LEFT || current.state == Node.BOAT_RIGHT) ? false : true;
-				
-				if (!haveNext) {
-					// If we just sent a (1,1) boat across
-					// Avoid just sending it back, wasting a turn
-					// see validateNextTrip()...
-					do {
-						nextBoat = children.remove(0);
-						haveNext = validateNextTrip(current, nextBoat);
-					} while (!haveNext && children.size() > 0);
-					
-					if (!haveNext) {
-						backtrack(current);
-						continue;
-					}
-					
-					//System.out.println("--> next: " + nextBoat);
-				}
+				Manifest nextBoat = children.remove(0), newLeft, newRight;
 				
 				switch (current.state) {
 					case Node.BOAT_LEFT:
@@ -221,19 +203,33 @@ public class Solver {
 	}
 	
 	/**
-	 * check proposed next travel state to avoid repeating turns
-	 * That is, if we just sent across a boat with Manifest M
-	 * Then we want to avoid sending back a boat with the same Manifest
-	 * @param Node current state
-	 * @param Manifest proposed next boat trip
-	 * @return boolean
+	 * Avoids looping by pruning stack when 
+	 * a state is found which already exists in the stack
+	 * @return
 	 */
-	private boolean validateNextTrip(Node current, Manifest next) {
-		if (current.state == Node.TRAVEL_LEFT || current.state == Node.TRAVEL_RIGHT || stack.size() < 3)
-			return true;
+	private Node pruneStack() {
+		Node current = stack.peek();
+		int size = stack.size();
 		
-		Node lastTrip = stack.get(stack.size() - 2);		
-		return !lastTrip.boat.equals(next);
+		if ((current.state == Node.BOAT_LEFT || current.state == Node.BOAT_RIGHT) &&
+			size > 4 && stateMap.containsKey(current)) {
+			
+			boolean seenBefore = false;
+			for (int i = size - 4; i >= 0; i--) {
+				if (stack.get(i).equals(current)) {
+					seenBefore = true;
+					break;
+				}
+			}
+			
+			// if the stack contains a loop, backtrack...
+			if (seenBefore) {
+				backtrack(current);
+				current = stack.peek();
+			}
+		}
+		
+		return current;
 	}
 	
 	/**
