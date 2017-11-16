@@ -2,6 +2,13 @@ package river.problems.wives;
 
 import river.Manifest;
 
+/**
+ * Husbands and Wives
+ * Equivalent to Missionaries and Cannibals
+ *
+ * a Wife may not be in the presence of a Husband unless
+ * the Husband has the same ID
+ */
 public class Definition {
 	public static Manifest getInitialState() {
 		Manifest m = new Manifest();
