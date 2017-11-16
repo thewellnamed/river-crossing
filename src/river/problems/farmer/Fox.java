@@ -17,7 +17,7 @@ public class Fox extends PassengerType {
 	 * Passenger type string
 	 */
 	public String getName() {
-		return "X";
+		return "Fox";
 	}
 	
 	/**

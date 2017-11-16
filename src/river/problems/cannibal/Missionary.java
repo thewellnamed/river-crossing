@@ -20,7 +20,7 @@ public class Missionary extends PassengerType {
 	 * Passenger type string
 	 */
 	public String getName() {
-		return "M";
+		return "Missionary";
 	}
 	
 	/**

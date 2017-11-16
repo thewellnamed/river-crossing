@@ -17,7 +17,7 @@ public class Farmer extends PassengerType {
 	 * Passenger type string
 	 */
 	public String getName() {
-		return "F";
+		return "Farmer";
 	}
 	
 	/**

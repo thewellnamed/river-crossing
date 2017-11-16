@@ -19,7 +19,7 @@ public class Cannibal extends PassengerType {
 	 * Passenger type string
 	 */
 	public String getName() {
-		return "C";
+		return "Cannibal";
 	}
 	
 	/**

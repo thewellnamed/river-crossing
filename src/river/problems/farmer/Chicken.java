@@ -19,7 +19,7 @@ public class Chicken extends PassengerType {
 	 * Passenger type string
 	 */
 	public String getName() {
-		return "C";
+		return "Chicken";
 	}
 	
 	/**

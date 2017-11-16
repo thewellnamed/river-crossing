@@ -19,7 +19,7 @@ public class Grain extends PassengerType {
 	 * Passenger type string
 	 */
 	public String getName() {
-		return "G";
+		return "Grain";
 	}
 	
 	/**
