@@ -24,6 +24,7 @@ public class Node {
 	public Manifest boat;
 	public int state;
 	public int nextChild;
+	public int hash;
 	
 	/**
 	 * Construct
@@ -34,6 +35,7 @@ public class Node {
 		boat = b;
 		state = currentState;
 		nextChild = 0;
+		hash = Objects.hash(state, left, right, boat);
 	}
 	
 	/**
@@ -81,7 +83,7 @@ public class Node {
 	
 	@Override 
 	public int hashCode() {
-		return Objects.hash(state, left, right, boat);
+		return hash;
 	}
 	
 	/**
@@ -97,7 +99,7 @@ public class Node {
 	 * @return String
 	 */
 	private String getStateString() {
-		String[] labels = { "LEFT ", " --> ", "RIGHT", " <-- " };
+		String[] labels = { "L    ", " --> ", "    R", " <-- " };
 		return labels[state];
 	}
 }

@@ -8,6 +8,8 @@ import river.Node;
  * PassengerType base class
  */
 public abstract class PassengerType {
+	private int hash = 0;
+	
 	public abstract String getName();
 	public abstract boolean validate(Node state);
 	
@@ -26,6 +28,10 @@ public abstract class PassengerType {
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(getName());
+		if (hash == 0) {
+			hash = Objects.hash(getName());
+		}
+		
+		return hash;
 	}
 }

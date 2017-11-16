@@ -1,7 +1,5 @@
 package river;
 
-import java.util.ArrayList;
-
 /**
  * Demo
  */
@@ -12,12 +10,9 @@ public class Main {
 		//Manifest init = river.problems.farmer.Definition.getInitialState();
 		//Manifest init = river.problems.wives.Definition.getInitialState();
 		
-		Solver s = new Solver(init, boatSize);
-		ArrayList<Node> solution = s.solve();
+		Solver s = new Solver(init, boatSize);		
+		Solution solution = s.solve();
 		
-		System.out.println("Solution:\n");
-		for (Node n : solution) {
-			System.out.println(n.prettyString());
-		}
+		System.out.println(solution);
 	}
 }

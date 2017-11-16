@@ -24,7 +24,7 @@ public class Solver {
 	
 	private Manifest initialState;
 	private int boatSize, maxDepth;
-	private ArrayList<Node> solution;
+	private Solution solution;
 	private Stack<Node> stack;
 	private Node current;
 	private HashMap<Node, ArrayList<Manifest>> nodeChildren;
@@ -43,7 +43,6 @@ public class Solver {
 		maxDepth = depth;
 		stack = new Stack<Node>();
 		nodeChildren = new HashMap<Node, ArrayList<Manifest>>();
-		solution = new ArrayList<Node>();
 	}
 	
 	/**
@@ -57,21 +56,19 @@ public class Solver {
 	 * leading from the initial state to a solution state
 	 * @return ArrayList<Node>
 	 */
-	public ArrayList<Node> solve() {
+	public Solution solve() {
 		Manifest left = initialState.clone();
 		Manifest right = new Manifest();
 		Manifest emptyBoat = new Manifest();
-		solution.clear();
+		solution = new Solution(null);
 		
 		// initialize stack to initial state with possible next moves
 		Node root = new Node(Node.BOAT_LEFT, left, right, emptyBoat);
 		stack.push(root);
 		
-		int iterations = 0;
-		int solutions = 0;
-		
+		long start = System.currentTimeMillis();
 		while (!stack.empty()) {
-			++iterations;
+			++solution.iterations;
 			current = stack.peek();
 			ArrayList<Manifest> children = getTripPermutations(current);
 			
@@ -79,10 +76,10 @@ public class Solver {
 			
 			// is current state a solution?
 			if (foundSolution()) {
-				solutions++;
+				++solution.count;
 					
-				if (solution.isEmpty() || stack.size() < solution.size()) {
-					solution = cloneStack();
+				if (solution.empty() || stack.size() < solution.size()) {
+					solution.setPath(cloneStack());
 				}
 
 				stack.pop(); // pop twice back to BOAT_LEFT
@@ -128,10 +125,9 @@ public class Solver {
 				}
 			}
 		}
-		
-		System.out.println(String.format("Iteration Count: %d", iterations));
-		System.out.println(String.format("States Visited: %d", nodeChildren.keySet().size()));
-		System.out.println(String.format("Solutions found: %d\n", solutions));
+
+		solution.statesVisited = nodeChildren.keySet().size();
+		solution.elapsedSeconds = (System.currentTimeMillis() - start) / 1000F;
 		
 		return solution;
 	}
@@ -149,7 +145,7 @@ public class Solver {
 	 * Current state is a dead end?
 	 */
 	private boolean rejectState(ArrayList<Manifest> children) {
-		return ((!solution.isEmpty() && stack.size() >= solution.size()) ||
+		return ((!solution.empty() && stack.size() >= solution.size()) ||
 				stack.size() > maxDepth || 
 			    (children != null && children.size() <= current.nextChild) ||
 				!current.isValid() || foundLoop());
@@ -254,8 +250,8 @@ public class Solver {
 	 * Clone current state (For solution)
 	 * @return ArrayList<Node>
 	 */
-	private ArrayList<Node> cloneStack() {
-		ArrayList<Node> ret = new ArrayList<Node>();
+	private Stack<Node> cloneStack() {
+		Stack<Node> ret = new Stack<Node>();
 		for (Node n : stack) {
 			Node next = new Node(n.state, n.left.clone(), n.right.clone(), n.boat.clone());
 			ret.add(next);

@@ -12,6 +12,7 @@ import river.problems.PassengerType;
 public class Manifest {
 	private HashMap<PassengerType, Integer> passengers;
 	private int size;
+	private int hash;
 	
 	/**
 	 * Construct
@@ -19,6 +20,7 @@ public class Manifest {
 	public Manifest() {
 		passengers = new HashMap<PassengerType, Integer>();
 		size = 0;
+		hash = 0;
 	}
 	
 	/**
@@ -36,6 +38,7 @@ public class Manifest {
 		}
 		
 		size += count;
+		hash = 0;
 	}
 	
 	/**
@@ -70,6 +73,7 @@ public class Manifest {
 			}
 			
 			size -= count;
+			hash = 0;
 		}
 	}
 	
@@ -135,7 +139,11 @@ public class Manifest {
 	
 	@Override
 	public int hashCode() {
-		return passengers.hashCode();
+		if (hash == 0) {
+			hash = passengers.hashCode();
+		}
+		
+		return hash;
 	}
 	
 	@Override
