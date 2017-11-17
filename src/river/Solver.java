@@ -58,7 +58,7 @@ public class Solver {
 	 * leading from the initial state to a solution state
 	 * @return Solution
 	 */
-	public Solution solve() {
+	public Solution solve(boolean exitWhenFound) {
 		Manifest left = initialState.clone();
 		Manifest right = new Manifest();
 		Manifest emptyBoat = new Manifest();
@@ -82,6 +82,10 @@ public class Solver {
 					
 				if (solution.empty() || stack.size() < solution.size()) {
 					solution.setPath(cloneStack());
+					
+					if (exitWhenFound) {
+						return solution;
+					}
 				}
 
 				stack.pop(); // pop twice back to BOAT_LEFT

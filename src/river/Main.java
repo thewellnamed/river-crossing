@@ -15,7 +15,9 @@ public class Main {
 		//problem = new river.problems.cowboys.Definition();
 		
 		Solver s = new Solver(problem);		
-		Solution solution = s.solve();
+		boolean exitOnFirstSolution = true;
+		
+		Solution solution = s.solve(exitOnFirstSolution);
 		
 		System.out.printf("Problem: %s\n", problem.getDescription());
 		System.out.println(solution);

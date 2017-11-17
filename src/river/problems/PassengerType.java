@@ -2,8 +2,6 @@ package river.problems;
 
 import java.util.Objects;
 
-import river.Node;
-
 /**
  * PassengerType base class
  */
