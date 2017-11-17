@@ -84,7 +84,7 @@ public class Solver {
 					solution.setPath(cloneStack());
 					
 					if (exitWhenFound) {
-						return solution;
+						break;
 					}
 				}
 
