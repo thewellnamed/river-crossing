@@ -9,13 +9,14 @@ public class Main {
 	public static void main(String[] args) {
 		ProblemDefinition problem;
 		
-		problem = new river.problems.cannibal.Definition();
+		//problem = new river.problems.cannibal.Definition();
 		//problem = new river.problems.farmer.Definition();
 	    //problem = new river.problems.wives.Definition();
 		//problem = new river.problems.cowboys.Definition();
+		problem = new river.problems.torch.Definition();
 		
 		Solver s = new Solver(problem);		
-		boolean exitOnFirstSolution = true;
+		boolean exitOnFirstSolution = false;
 		
 		Solution solution = s.solve(exitOnFirstSolution);
 		
