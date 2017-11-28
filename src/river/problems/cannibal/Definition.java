@@ -33,7 +33,7 @@ public class Definition implements ProblemDefinition {
 	public boolean validate(Stack<Node> path) {
 		Node state = path.peek();
 		
-		Manifest[] manifests = { state.left, state.right, state.boat };
+		Manifest[] manifests = { state.left, state.right };
 		
 		for (Manifest m : manifests) {
 			int missionaries = m.size(Missionary.type),

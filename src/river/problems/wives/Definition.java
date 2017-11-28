@@ -4,6 +4,7 @@ import java.util.Stack;
 
 import river.Manifest;
 import river.Node;
+import river.problems.PassengerType;
 import river.problems.ProblemDefinition;
 
 /**
@@ -37,12 +38,34 @@ public class Definition implements ProblemDefinition {
 	}
 	
 	public boolean validate(Stack<Node> path) {
-		Node current = path.peek();
+		Node state = path.peek();
+		Manifest[] manifests = { state.left, state.right, state.boat };
+		int[][] otherHusbands = {{ 1,2 }, { 0,2 }, { 0,1 }};
 		
-		for (int i = 1; i <= COUPLES_COUNT; i++) {
-			Wife w = new Wife(i);
-			if (!w.validate(current)) {
-				return false;
+		for (Manifest m : manifests) {
+			int husbands[] = { 0, 0, 0 };
+			int wives[] = { 0, 0, 0 };
+			
+			for (PassengerType p: m.passengerTypes()) {
+				if (p instanceof Husband) {
+					Husband h = (Husband) p;
+					husbands[h.getId() - 1]++;
+				}
+				
+				else if (p instanceof Wife) {
+					Wife w = (Wife) p;
+					wives[w.getId() - 1]++;
+				}
+			}
+			
+			for (int i = 0; i < COUPLES_COUNT; i++) {
+				if (wives[i] > 0 && husbands[i] == 0) {
+					for (int j = 0; j < 2; j++) {
+						if (husbands[otherHusbands[i][j]] > 0) {
+							return false;
+						}
+					}
+				}
 			}
 		}
 		

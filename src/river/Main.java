@@ -11,9 +11,9 @@ public class Main {
 		
 		//problem = new river.problems.cannibal.Definition();
 		//problem = new river.problems.farmer.Definition();
-	    //problem = new river.problems.wives.Definition();
 		//problem = new river.problems.cowboys.Definition();
-		problem = new river.problems.torch.Definition();
+		//problem = new river.problems.torch.Definition();
+	    problem = new river.problems.wives.Definition();
 		
 		Solver s = new Solver(problem);		
 		boolean exitOnFirstSolution = false;
