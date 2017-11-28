@@ -13,6 +13,7 @@ import river.problems.ProblemDefinition;
  * 
  * There are four people who must cross, 2 at a time
  * Each takes a variable amount of time (1 min, 2 min, 5 min, 8 min)
+ * After each crossing someone must return with the torch (like the boat)
  * Can they each cross in a total of 15 minutes or less?
  */
 public class Definition implements ProblemDefinition {
