@@ -11,11 +11,11 @@ import river.problems.ProblemDefinition;
  * Husbands and Wives
  * Equivalent to Missionaries and Cannibals
  *
- * a Wife may not be in the presence of a Husband unless
- * the Husband has the same ID
+ * a Wife may not be in the presence of any husband which
+ * is not her own (same ID) unless her husband is also present
  */
 public class Definition implements ProblemDefinition {
-	
+	// if you modify this, modify validate()...
 	private final int COUPLES_COUNT = 3;
 
 	public Manifest getInitialState() {
